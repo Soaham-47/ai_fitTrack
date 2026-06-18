@@ -18,6 +18,7 @@ app = FastAPI(title="FitTrack AI Core Backend", redirect_slashes=False)
 origins = [
     "http://localhost:5173",  # Your local React/Vite development server
     "http://127.0.0.1:5173",
+    "https://ai-fit-track.vercel.app"
 ]
 
 # 3. ADD THE MIDDLEWARE TO THE APP
