@@ -1,0 +1,1 @@
+export const API_BASE_URL = "https://ai-fittrack-yq39.onrender.com/api/v1";

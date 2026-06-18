@@ -1,0 +1,12 @@
+# Node / Frontend dependencies
+node_modules/
+dist/
+.env
+
+# Python / Backend caches and environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+.pytest_cache/

@@ -1,0 +1,11 @@
+fastapi
+sqlmodel
+psycopg2-binary
+pydantic-settings
+google-genai
+uvicorn
+passlib[bcrypt]
+pyjwt
+python-multipart
+jinja2
+bcrypt
