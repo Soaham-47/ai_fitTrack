@@ -36,7 +36,7 @@ templates = Jinja2Templates(directory="app/templates")
 def on_startup():
     init_db()
 
-@app.get("/", response_class=HTMLResponse)
+@app.route("/", response_class=HTMLResponse,methods=["GET","HEAD"])
 async def home_page(request: Request):
     template_path = os.path.join("app", "templates", "index.html")
     with open(template_path, "r", encoding="utf-8") as file:
