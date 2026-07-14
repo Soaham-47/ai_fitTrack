@@ -8,6 +8,7 @@ export default function Login({ onLoginSuccess }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isLoadingGuest, setIsLoadingGuest] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,13 +17,11 @@ export default function Login({ onLoginSuccess }) {
 
     try {
       if (isRegistering) {
-        // Handle User Registration (Sends a clean JSON object, which your backend expects here)
         await axios.post(`${API_BASE_URL}/auth/register`, { username, password });
         setMessage('Registration successful! Please log in.');
         setIsRegistering(false);
         setPassword('');
       } else {
-        // Handle User Login (Constructs true application/x-www-form-urlencoded data)
         const params = new URLSearchParams();
         params.append('username', username);
         params.append('password', password);
@@ -34,18 +33,33 @@ export default function Login({ onLoginSuccess }) {
         });
 
         const { access_token } = response.data;
-        
-        // Save token to localStorage
         localStorage.setItem('token', access_token);
         onLoginSuccess();
       }
-    // ... inside your handleSubmit function in Login.jsx
     } catch (err) {
-      // 1. ADD THIS LINE TO FORCE IT TO PRINT:
       console.log("THE ACTUAL FRONTEND ERROR:", err);
-      
-      // This is what is setting that generic text on your screen:
       setError(err.response?.data?.detail || 'An error occurred. Please try again.');
+    }
+  };
+
+  // --- NEW: HANDLES GUEST LOGIN STRATEGY ---
+  const handleGuestLogin = async () => {
+    setMessage('');
+    setError('');
+    setIsLoadingGuest(true);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/auth/guest-login`);
+      const { access_token } = response.data;
+      
+      // Save the generated ephemeral guest token
+      localStorage.setItem('token', access_token);
+      onLoginSuccess();
+    } catch (err) {
+      console.log("THE ACTUAL FRONTEND GUEST ERROR:", err);
+      setError(err.response?.data?.detail || 'Guest entry failed. Please try again.');
+    } finally {
+      setIsLoadingGuest(false);
     }
   };
 
@@ -89,6 +103,26 @@ export default function Login({ onLoginSuccess }) {
             {isRegistering ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
+
+        {/* --- NEW: VISUAL SEPARATOR & GUEST BUTTON --- */}
+        {!isRegistering && (
+          <>
+            <div className="relative flex py-4 items-center">
+              <div className="flex-grow border-t border-gray-800"></div>
+              <span className="flex-shrink mx-4 text-gray-500 text-xs uppercase tracking-wider">Or</span>
+              <div className="flex-grow border-t border-gray-800"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={isLoadingGuest}
+              className="w-full bg-gray-800 hover:bg-gray-750 text-emerald-400 border border-gray-700 hover:border-emerald-500/30 font-semibold py-3 rounded-xl transition disabled:opacity-50"
+            >
+              {isLoadingGuest ? 'Creating Profile...' : 'Explore as Guest (Recruiters)'}
+            </button>
+          </>
+        )}
 
         <div className="mt-6 text-center">
           <button
