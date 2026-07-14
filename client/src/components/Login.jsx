@@ -119,7 +119,7 @@ export default function Login({ onLoginSuccess }) {
               disabled={isLoadingGuest}
               className="w-full bg-gray-800 hover:bg-gray-750 text-emerald-400 border border-gray-700 hover:border-emerald-500/30 font-semibold py-3 rounded-xl transition disabled:opacity-50"
             >
-              {isLoadingGuest ? 'Creating Profile...' : 'Explore as Guest (Recruiters)'}
+              {isLoadingGuest ? 'Creating Profile...' : 'Explore as Guest'}
             </button>
           </>
         )}
