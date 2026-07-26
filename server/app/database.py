@@ -4,6 +4,7 @@ from app.config import settings
 # Import the models to ensure they are registered with SQLModel's metadata
 from app.nutrition.models import MealLog, FoodItem
 from app.workout.models import WorkoutLog, ExerciseSet
+from app.auth.models import User
 # Create the engine using the database URL from our config
 engine = create_engine(settings.DATABASE_URL, echo=True)
 
