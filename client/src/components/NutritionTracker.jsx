@@ -72,7 +72,7 @@ export default function NutritionTracker() {
           <Utensils className="text-emerald-400 w-5 h-5" /> AI Nutrition Logger
         </h3>
         <p className="text-gray-400 text-sm mb-6">
-          Describe what you ate in natural language (e.g., "I had two fried eggs and a slice of whole wheat toast for breakfast").
+          Describe what you ate and the portion in natural language (e.g., "I had two scrambled eggs and 200g of white rice for Lunch").
         </p>
 
         <form onSubmit={handleAnalyze} className="space-y-4">
