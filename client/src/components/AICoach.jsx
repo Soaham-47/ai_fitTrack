@@ -26,15 +26,23 @@ export default function AICoach() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/chat/coach`, {
-        message: userMessage
-      });
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${API_BASE_URL}/chat/coach`,
+        { message: userMessage },
+        token ? {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        } : {}
+      );
 
       setMessages((prev) => [...prev, { text: response.data.response, isBot: true }]);
     } catch (err) {
+      const detail = err.response?.data?.detail || 'Coach processing failed. Please check your backend logs or try again.';
       setMessages((prev) => [
-        ...prev, 
-        { text: "Coach processing failed. Please check your backend logs or try again.", isBot: true, isError: true }
+        ...prev,
+        { text: detail, isBot: true, isError: true }
       ]);
     } finally {
       setLoading(false);

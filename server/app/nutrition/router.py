@@ -7,8 +7,9 @@ from sqlalchemy.orm import selectinload
 
 from app.database import get_session
 from app.nutrition.models import MealLog, FoodItem
-from app.ai.service import analyze_meal_text 
+from app.ai.service import analyze_meal_text, embed_text
 from app.auth.router import get_current_user, User
+from app.rag.memory import build_meal_memory_chunk, save_memory_item
 
 router = APIRouter()
 
@@ -105,6 +106,17 @@ async def analyze_and_log_meal(
         
         session.commit()
         session.refresh(db_meal)
+
+        meal_chunk = build_meal_memory_chunk(db_meal)
+        meal_embedding = embed_text(meal_chunk)
+        save_memory_item(
+            session,
+            user_id=current_user.id,
+            source_type="meal",
+            source_id=db_meal.id,
+            chunk_text=meal_chunk,
+            embedding=meal_embedding,
+        )
         
         # Force SQLModel to lazy-load the children relationship array before returning
         _ = db_meal.food_items  
@@ -152,6 +164,17 @@ async def create_meal_log(
     
     session.commit()
     session.refresh(db_meal)
+
+    meal_chunk = build_meal_memory_chunk(db_meal)
+    meal_embedding = embed_text(meal_chunk)
+    save_memory_item(
+        session,
+        user_id=current_user.id,
+        source_type="meal",
+        source_id=db_meal.id,
+        chunk_text=meal_chunk,
+        embedding=meal_embedding,
+    )
     return db_meal
 
 

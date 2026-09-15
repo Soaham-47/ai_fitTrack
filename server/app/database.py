@@ -1,3 +1,4 @@
+from sqlalchemy import text as sa_text
 from sqlmodel import create_engine, Session, SQLModel
 from app.config import settings
 
@@ -5,14 +6,19 @@ from app.config import settings
 from app.nutrition.models import MealLog, FoodItem
 from app.workout.models import WorkoutLog, ExerciseSet
 from app.auth.models import User
+from app.rag.memory import MemoryItem
+
 # Create the engine using the database URL from our config
 engine = create_engine(settings.DATABASE_URL, echo=True)
+
 
 def init_db():
     """
     Creates all tables defined in our models.
     We will call this on app startup.
     """
+    with engine.begin() as conn:
+        conn.execute(sa_text("CREATE EXTENSION IF NOT EXISTS vector"))
     SQLModel.metadata.create_all(engine)
 
 def get_session():

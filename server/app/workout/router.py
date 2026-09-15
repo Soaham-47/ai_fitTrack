@@ -8,6 +8,8 @@ from sqlalchemy.orm import selectinload
 from app.database import get_session     
 from app.auth.router import get_current_user, User  
 from app.workout.models import WorkoutLog, ExerciseSet
+from app.ai.service import embed_text
+from app.rag.memory import build_workout_memory_chunk, save_memory_item
 
 router = APIRouter()
 
@@ -77,6 +79,17 @@ def log_workout(
     # 3. Eagerly reload the freshly populated data structure
     statement = select(WorkoutLog).where(WorkoutLog.id == db_workout.id).options(selectinload(WorkoutLog.exercise_sets))
     result = db.exec(statement).first()
+
+    workout_chunk = build_workout_memory_chunk(result)
+    workout_embedding = embed_text(workout_chunk)
+    save_memory_item(
+        db,
+        user_id=current_user.id,
+        source_type="workout",
+        source_id=result.id,
+        chunk_text=workout_chunk,
+        embedding=workout_embedding,
+    )
     
     return result
 

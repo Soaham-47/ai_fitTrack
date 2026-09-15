@@ -1,11 +1,23 @@
 from google import genai
 from google.genai import types
 from pydantic import BaseModel, Field
-from typing import List, Optional  # <-- FIX: Added Optional here
+from typing import List, Optional
 from app.config import settings
 
 # 1. Initialize the official Google GenAI Client
 client = genai.Client(api_key=settings.GEMINI_API_KEY)
+
+
+def embed_text(text: str) -> list[float]:
+    """Create an embedding for a text snippet using Gemini."""
+    response = client.models.embed_content(
+        model=settings.GEMINI_EMBEDDING_MODEL,
+        contents=text,
+    )
+    values = getattr(response, "embeddings", None)
+    if not values:
+        raise ValueError("No embedding returned from Gemini.")
+    return list(values[0].values)
 
 
 # --- NUTRITION SCHEMAS ---

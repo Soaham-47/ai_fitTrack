@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     
     # AI Settings
     GEMINI_API_KEY: str
+    GEMINI_EMBEDDING_MODEL: str = "gemini-embedding-001"
+    GEMINI_EMBEDDING_DIMENSIONS: int = 3072
 
     # Automatically look for a .env file in the root directory
     model_config = SettingsConfigDict(

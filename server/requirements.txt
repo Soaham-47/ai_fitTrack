@@ -1,6 +1,7 @@
 fastapi
 sqlmodel
 psycopg2-binary
+pgvector
 pydantic-settings
 google-genai
 uvicorn
